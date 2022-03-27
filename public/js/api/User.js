@@ -10,7 +10,7 @@ class User {
    * */
   static URL = " /user"
   static setCurrent(user) {
-    localStorage.user = JSON.stringify(user)
+    localStorage.user = JSON.stringify(user);
   }
 
   /**
@@ -18,7 +18,7 @@ class User {
    * пользователе из локального хранилища.
    * */
   static unsetCurrent() {
-    delete localStorage.user
+    delete localStorage.user;
   }
 
   /**
@@ -26,7 +26,7 @@ class User {
    * из локального хранилища
    * */
   static current() {
-    return JSON.parse(localstorage.user)
+    return JSON.parse(localStorage.getItem("user"));
   }
 
   /**
@@ -61,8 +61,8 @@ class User {
       responseType: "json",
       data,
       callback: (err, response) => {
-        if (response && response.user) {
-          this.setCurrent(response.user);
+        if ( response && response.user ) {
+          User.setCurrent(response.user);
         }
         callback(err, response);
       }
@@ -77,8 +77,9 @@ class User {
    * */
   static register(data, callback) {
     createRequest({
-      url: URL + "/register",
-      method: "GET",
+      url: this.URL + "/register",
+      method: "POST",
+      data,
       callback: (err, response) => {
         if ( response && response.user ) {
           User.setCurrent( response.user );
@@ -92,12 +93,13 @@ class User {
    * Производит выход из приложения. После успешного
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
-  static logout(callback) {
+  static logout(data, callback) {
     createRequest({
       method: "POST",
-      url: URL + "/logout",
+      url: this.URL + "/logout",
+      data,
       callback: (err, response) => {
-        if (response && response.user) {
+        if ( response && response.user ) {
           User.unsetCurrent ();
         }
         callback (err, response)
